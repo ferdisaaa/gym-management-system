@@ -10,32 +10,34 @@ services:
     env_file:
       - .env
     environment:
-      DB_HOST: mysql
+      DB_HOST: postgres
+      DB_PORT: 5432
     depends_on:
-      mysql:
+      postgres:
         condition: service_healthy
     volumes:
       - .:/app
       - /app/node_modules
 
-  mysql:
-    image: mysql:8.0
-    container_name: gym-mysql
+  postgres:
+    image: postgres:16
+    container_name: gym-postgres
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - gym_mysql_data:/var/lib/mysql
+      - gym_postgres_data:/var/lib/postgresql/data
     healthcheck:
       test:
         - CMD-SHELL
-        - mysqladmin ping -h 127.0.0.1 -uroot -p$${MYSQL_ROOT_PASSWORD} || exit 1
+        - pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"
       interval: 10s
       timeout: 5s
       retries: 10
 
 volumes:
-  gym_mysql_data:
+  gym_postgres_data:
