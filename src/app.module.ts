@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MembersModule } from './members/members.module';
 import { TrainersModule } from './trainers/trainers.module';
+import { MembershipPlansModule } from './membership_plans/membership_plans.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { TrainersModule } from './trainers/trainers.module';
     }),
     MembersModule,
     TrainersModule,
+    MembershipPlansModule,
   ],
   controllers: [AppController],
   providers: [AppService],
