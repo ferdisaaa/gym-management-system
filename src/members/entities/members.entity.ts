@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Membership } from '../../memberships/entities/memberships.entity';
 
 @Entity('members')
 export class Member {
@@ -19,4 +20,7 @@ export class Member {
 
   @Column({ type: 'varchar', nullable: true })
   address: string | null;
+
+  @OneToMany(() => Membership, (membership) => membership.member)
+  memberships: Membership[];
 }
