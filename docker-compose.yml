@@ -1,43 +1,15 @@
 services:
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: gym-api
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-    env_file:
-      - .env
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: gym_postgres
     environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-    depends_on:
-      postgres:
-        condition: service_healthy
-    volumes:
-      - .:/app
-      - /app/node_modules
-
-  postgres:
-    image: postgres:16
-    container_name: gym-postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: supersecretpassword
+      POSTGRES_DB: gym_management_db
     ports:
       - "5432:5432"
     volumes:
-      - gym_postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test:
-        - CMD-SHELL
-        - pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"
-      interval: 10s
-      timeout: 5s
-      retries: 10
+      - postgres_data_volume:/var/lib/postgresql/data
 
 volumes:
-  gym_postgres_data:
+  postgres_data_volume:

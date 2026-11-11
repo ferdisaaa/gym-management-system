@@ -1,4 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { OneToMany } from 'typeorm';
+import { TrainingSession } from '../../training-sessions/entities/training-session.entity';
 
 @Entity('trainers')
 export class Trainer {
@@ -16,4 +18,10 @@ export class Trainer {
 
   @Column({ type: 'varchar', nullable: true })
   specialization: string | null;
+
+  @OneToMany(
+    () => TrainingSession,
+    (session) => session.trainer,
+  )
+  trainingSessions: TrainingSession[];
 }
