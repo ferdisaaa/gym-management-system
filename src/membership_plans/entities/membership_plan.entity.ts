@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Membership } from '../../memberships/entities/memberships.entity';
 
 @Entity('membership_plans')
 export class MembershipPlan {
@@ -8,7 +9,6 @@ export class MembershipPlan {
   @Column()
   name: string;
 
-  // Postgres mengembalikan decimal sebagai string, jadi diubah ke number
   @Column({
     type: 'decimal',
     precision: 12,
@@ -20,10 +20,12 @@ export class MembershipPlan {
   })
   price: number;
 
-  // durasi dalam hari
   @Column()
   durationDays: number;
 
   @Column({ type: 'varchar', nullable: true })
   description: string | null;
+
+  @OneToMany(() => Membership, (membership) => membership.plan)
+  memberships: Membership[];
 }
