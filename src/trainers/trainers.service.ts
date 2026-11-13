@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Trainer } from './entities/trainers.entity';
@@ -7,9 +7,27 @@ import { UpdateTrainerDto } from './dto/update-trainers.dto';
 
 @Injectable()
 export class TrainersService {
-  constructor(@InjectRepository(Trainer) private repo: Repository<Trainer>) {}
+  constructor(@InjectRepository(Trainer) private repo: Repository<Trainer>) { }
 
-  create(dto: CreateTrainerDto) {
+  async create(dto: CreateTrainerDto) {
+    // 1. Cek  email atau phone trainer sudah terdaftar sebelumnya
+    const existingTrainer = await this.repo.findOne({
+      where: [
+        { email: dto.email },
+        { phone: dto.phone },
+      ],
+    });
+
+    if (existingTrainer) {
+      if (existingTrainer.email === dto.email) {
+        throw new ConflictException('Email trainer sudah terdaftar oleh trainer lain.');
+      }
+      if (existingTrainer.phone === dto.phone) {
+        throw new ConflictException('Nomor telepon trainer sudah terdaftar oleh trainer lain.');
+      }
+    }
+
+    // 2. Jika aman, simpan data trainer baru
     return this.repo.save(this.repo.create(dto));
   }
 

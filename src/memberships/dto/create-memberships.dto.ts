@@ -7,7 +7,7 @@ export class CreateMembershipDto {
   @IsInt()
   planId: number;
 
-  // format YYYY-MM-DD, kalau kosong dipakai hari ini
+  // format YYYY-MM-DD,
   @IsOptional()
   @IsDateString()
   startDate?: string;
